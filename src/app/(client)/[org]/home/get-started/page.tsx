@@ -8,11 +8,19 @@ import moment from "moment";
 import { useRouter } from "next/navigation";
 import { GetRequest } from "~/utils/new-request";
 
+const greetingForHour = (hour: number) => {
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+};
+
 const GetStarted = () => {
   const { state } = useContext(DataContext);
   const { user, orgData, orgSlug } = state;
   const router = useRouter();
   const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const greeting = greetingForHour(new Date().getHours());
 
   useEffect(() => {
     const orgId = localStorage.getItem("orgId") || "";
@@ -21,6 +29,7 @@ const GetStarted = () => {
       if (res?.status === 200 || res?.status === 201) {
         setData(res?.data?.data);
       }
+      setLoading(false);
     };
     getData();
   }, []);
@@ -32,7 +41,7 @@ const GetStarted = () => {
       <div className="mb-4">
         <h2 className="font-semibold text-sm mb-3">Get started</h2>
         <p className="text-lg font-extrabold">
-          <span className="text-3xl">👋</span> Welcome,{" "}
+          <span className="text-3xl">👋</span> {greeting},{" "}
           <span className="text-purple-800">{user?.username}</span>! Ready to
           dive in?
         </p>
@@ -47,6 +56,15 @@ const GetStarted = () => {
               message and introduce yourself.
             </p>
           </>
+        )}
+        {!loading && teammates.length === 0 && (
+          <div className="border border-dashed rounded-md bg-white p-6 text-center max-w-6xl">
+            <p className="font-semibold text-sm">No teammates here yet</p>
+            <p className="text-sm text-gray-500 mt-1">
+              You are the first one in {orgData?.name}. Invite your team from
+              the sidebar and they will show up here.
+            </p>
+          </div>
         )}
 
         <div className="py-2 max-w-6xl">
@@ -99,6 +117,12 @@ const GetStarted = () => {
         </div>
 
         <div className="border rounded-md bg-white">
+          {!loading && !data?.org_channels?.length && (
+            <p className="p-4 text-sm text-gray-500 font-semibold">
+              No channels to suggest yet. Create one from the sidebar to start
+              a conversation.
+            </p>
+          )}
           {data?.org_channels?.map((channel: any, index: number) => (
             <div
               key={index}
