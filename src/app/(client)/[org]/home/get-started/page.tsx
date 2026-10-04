@@ -41,7 +41,7 @@ const GetStarted = () => {
       <div>
         {teammates.length > 0 && (
           <>
-            <h3 className="font-bold text-sm">Say hello to someone</h3>
+            <h3 className="font-bold text-sm">Say hi to someone</h3>
             <p className="font-semibold text-sm text-gray-500 mb-2">
               Here are a few of your {orgData?.name} teammates. Send someone a
               message and introduce yourself.
